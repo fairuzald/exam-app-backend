@@ -1,4 +1,4 @@
-name: End-to-End Tests
+name: Run e2e Tests
 
 on:
   push:
@@ -9,28 +9,33 @@ on:
       - main
 
 jobs:
-  e2e:
+  e2e-tests:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SMTP_HOST: ${{ secrets.SMTP_HOST }}
+      SMTP_SERVICE: ${{ secrets.SMTP_SERVICE }}
+      SMTP_MAIL: ${{ secrets.SMTP_MAIL }}
+      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      SMTP_APP_PASSWORD: ${{ secrets.SMTP_APP_PASSWORD }}
+      ACTIVATION_SECRET: ${{ secrets.ACTIVATION_SECRET }}
+      ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+      REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
+      FORGOT_PASS_SECRET: ${{ secrets.FORGOT_PASS_SECRET }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      RESET_PASS_URL: ${{ secrets.RESET_PASS_URL }}
 
     steps:
-      # Check out the code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18' # Sesuaikan dengan versi Node.js yang Anda gunakan
+          node-version: '18' # Replace with your Node.js version
 
-      # Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Build the application
-      - name: Build the application
-        run: npm run build
-
-      # Run end-to-end tests
-      - name: Run end-to-end tests
+      - name: Run e2e tests
         run: npm run test:e2e
