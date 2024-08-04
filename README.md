@@ -150,3 +150,7 @@ E2E tests are written using Jest and Supertest. These tests cover various scenar
 
 You can see the deployment of this project on [Railway](https://exam-app-backend-production-0873.up.railway.app/)
 You can see the documentation API on [Swagger](https://exam-app-backend-production-0873.up.railway.app/docs)
+
+### Environment Variables
+
+This is my env if you want to share the same database cloud [here](https://gist.github.com/fairuzald/d1e55618d37834006e6e5d2790440c1a)
