@@ -3,9 +3,12 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 
-describe('AppController (e2e)', () => {
+describe('Quiz and Question Modules (e2e)', () => {
   let app: INestApplication;
+  let quizId: string;
   let questionId: string;
+
+  const testUserId = '48791516-4bb7-4791-89aa-2e92c3868d76'; // Constant for testing
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -20,13 +23,69 @@ describe('AppController (e2e)', () => {
     await app.close();
   });
 
+  // Create, Read, Update, Delete (CRUD) operations for Quiz entities
+  it('should create a new quiz', async () => {
+    const createQuizDto = {
+      title: 'Sample Quiz',
+      description: 'This is a sample quiz',
+      duration: 30,
+      isPublished: true,
+      difficulty: 'easy',
+      instruction: 'Follow the instructions',
+      isRandomized: false,
+      createdById: testUserId,
+    };
+
+    const response = await request(app.getHttpServer())
+      .post('/quiz')
+      .send(createQuizDto)
+      .expect(201);
+
+    quizId = response.body.data.id;
+
+    expect(response.body.data).toHaveProperty('id');
+    expect(response.body.data.title).toBe(createQuizDto.title);
+  });
+
+  it('should get all quizzes', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/quiz')
+      .expect(200);
+
+    expect(Array.isArray(response.body.data)).toBe(true);
+  });
+
+  it('should get a single quiz by ID', async () => {
+    const response = await request(app.getHttpServer())
+      .get(`/quiz/${quizId}`)
+      .expect(200);
+
+    expect(response.body.data).toHaveProperty('id');
+    expect(response.body.data.id).toBe(quizId);
+  });
+
+  it('should update a quiz', async () => {
+    const updateQuizDto = {
+      title: 'Updated Quiz Title',
+    };
+
+    const response = await request(app.getHttpServer())
+      .put(`/quiz/${quizId}`)
+      .send(updateQuizDto)
+      .expect(200);
+
+    expect(response.body.data).toHaveProperty('id');
+    expect(response.body.data.title).toBe(updateQuizDto.title);
+  });
+
   it('should create a question', async () => {
     const createQuestionDto = {
-      question: 'What is the capital of Australia?',
+      questionText: 'What is the capital of Australia?',
       questionType: 'multiple-choice',
       maxPoints: 5,
       explanation: 'The capital of Australia is Canberra.',
       correctAnswer: 'Canberra',
+      quizId,
     };
 
     const response = await request(app.getHttpServer())
@@ -34,8 +93,9 @@ describe('AppController (e2e)', () => {
       .send(createQuestionDto)
       .expect(201);
 
-    expect(response.body.data).toHaveProperty('id');
     questionId = response.body.data.id;
+
+    expect(response.body.data).toHaveProperty('id');
   });
 
   it('should create a question option', async () => {
@@ -57,11 +117,11 @@ describe('AppController (e2e)', () => {
       .get('/question')
       .expect(200);
 
-    expect(response.body.data).toBeInstanceOf(Array);
+    expect(Array.isArray(response.body.data)).toBe(true);
     expect(response.body.data.length).toBeGreaterThan(0);
   });
 
-  it('should get a single question', async () => {
+  it('should get a single question by ID', async () => {
     const response = await request(app.getHttpServer())
       .get(`/question/${questionId}`)
       .expect(200);
@@ -71,7 +131,7 @@ describe('AppController (e2e)', () => {
 
   it('should update a question', async () => {
     const updateQuestionDto = {
-      question: 'What is the capital of Germany?',
+      questionText: 'What is the capital of Germany?',
       questionType: 'multiple-choice',
       maxPoints: 5,
       explanation: 'The capital of Germany is Berlin.',
@@ -84,9 +144,8 @@ describe('AppController (e2e)', () => {
       .expect(200);
 
     expect(response.body.data).toHaveProperty('id', questionId);
-    expect(response.body.data).toHaveProperty(
-      'question',
-      'What is the capital of Germany?',
+    expect(response.body.data.questionText).toBe(
+      updateQuestionDto.questionText,
     );
   });
 
@@ -135,7 +194,7 @@ describe('AppController (e2e)', () => {
       .expect(404);
   });
 
-  it('should get an invalid uuid question id', async () => {
+  it('should get an invalid UUID question id', async () => {
     await request(app.getHttpServer())
       .get('/question/invalid-uuid')
       .expect(400);
@@ -147,7 +206,7 @@ describe('AppController (e2e)', () => {
       .expect(404);
   });
 
-  it('should get an invalid uuid question option id', async () => {
+  it('should get an invalid UUID question option id', async () => {
     await request(app.getHttpServer())
       .get('/question-options/invalid-uuid')
       .expect(400);
@@ -155,7 +214,7 @@ describe('AppController (e2e)', () => {
 
   it('should update a non-existent question id', async () => {
     const updateQuestionDto = {
-      question: 'What is the capital of Germany?',
+      questionText: 'What is the capital of Germany?',
       questionType: 'multiple-choice',
       maxPoints: 5,
       explanation: 'The capital of Germany is Berlin.',
@@ -188,7 +247,7 @@ describe('AppController (e2e)', () => {
       .expect(404);
   });
 
-  it('should delete an invalid uuid question id', async () => {
+  it('should delete an invalid UUID question id', async () => {
     await request(app.getHttpServer())
       .delete('/question/invalid-uuid')
       .expect(400);
@@ -200,9 +259,16 @@ describe('AppController (e2e)', () => {
       .expect(404);
   });
 
-  it('should delete an invalid uuid question option id', async () => {
+  it('should delete an invalid UUID question option id', async () => {
     await request(app.getHttpServer())
       .delete('/question-options/invalid-uuid')
       .expect(400);
+  });
+
+  it('should delete a quiz', async () => {
+    await request(app.getHttpServer()).delete(`/quiz/${quizId}`).expect(200);
+
+    // Verify deletion
+    await request(app.getHttpServer()).get(`/quiz/${quizId}`).expect(404);
   });
 });
