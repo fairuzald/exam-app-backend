@@ -1,4 +1,3 @@
-// src/question-option/question-option.service.ts
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { QuestionOption } from './question-option.entity';

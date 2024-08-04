@@ -1,4 +1,3 @@
-// src/question-options/question-options.service.ts
 import {
   NotFoundException,
   BadRequestException,

@@ -1,9 +1,11 @@
+import { Quiz } from '../quiz/quiz.entity';
 import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 export enum UserRole {
@@ -41,4 +43,7 @@ export class Users {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @OneToMany(() => Quiz, (quiz) => quiz.createdBy)
+  quizzes: Quiz[];
 }

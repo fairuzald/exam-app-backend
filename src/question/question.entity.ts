@@ -1,5 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToOne,
+} from 'typeorm';
 import { QuestionOption } from '../question-option/question-option.entity';
+import { Quiz } from '../quiz/quiz.entity';
+
+export type QuestionType =
+  | 'multiple-choice'
+  | 'true-false'
+  | 'short-answer'
+  | 'essay'
+  | 'checkbox';
 
 @Entity()
 export class Question {
@@ -7,7 +21,7 @@ export class Question {
   id: string;
 
   @Column('text')
-  question: string;
+  questionText: string;
 
   @Column({
     type: 'enum',
@@ -19,15 +33,10 @@ export class Question {
       'checkbox',
     ],
   })
-  questionType:
-    | 'multiple-choice'
-    | 'true-false'
-    | 'short-answer'
-    | 'essay'
-    | 'checkbox';
+  questionType: QuestionType;
 
-  @Column({ type: 'int' })
-  maxPoints: number;
+  @Column({ type: 'int', nullable: true })
+  maxPoints?: number;
 
   @Column({ type: 'text', nullable: true })
   explanation?: string;
@@ -35,6 +44,16 @@ export class Question {
   @Column({ type: 'text', nullable: true })
   correctAnswer?: string;
 
+  @Column({ type: 'uuid' })
+  quizId: string;
+
   @OneToMany(() => QuestionOption, (option) => option.question)
   options?: QuestionOption[];
+
+  @ManyToOne(() => Quiz, (quiz) => quiz.questions, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  quiz: Quiz;
 }

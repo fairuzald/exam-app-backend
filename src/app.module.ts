@@ -7,6 +7,7 @@ import { EmailModule } from './user/email/email.module';
 import * as url from 'url';
 import { QuestionOptionModule } from './question-option/question-option.module';
 import { QuestionModule } from './question/question.module';
+import { QuizModule } from './quiz/quiz.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { QuestionModule } from './question/question.module';
     EmailModule,
     QuestionOptionModule,
     QuestionModule,
+    QuizModule,
   ],
 })
 export class AppModule {}
