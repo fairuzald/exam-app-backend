@@ -78,6 +78,7 @@ describe('Quiz and Question Modules (e2e)', () => {
     expect(response.body.data.title).toBe(updateQuizDto.title);
   });
 
+  // Create, Read, Update, Delete (CRUD) operations for Question and QuestionOption entities
   it('should create a question', async () => {
     const createQuestionDto = {
       questionText: 'What is the capital of Australia?',
@@ -155,8 +156,7 @@ describe('Quiz and Question Modules (e2e)', () => {
       .expect(200);
   });
 
-  // Additional test cases
-
+  // Abnormal test cases
   it('should create a question with invalid data', async () => {
     const invalidQuestionDto = {
       question: '',

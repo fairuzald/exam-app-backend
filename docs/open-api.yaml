@@ -1,0 +1,493 @@
+openapi: 3.0.0
+info:
+  title: Quiz API
+  description: API for managing quizzes, questions, and question options.
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:3000'
+    description: Local server
+tags:
+  - name: quizzes
+    description: Operations related to quizzes
+  - name: questions
+    description: Operations related to questions
+  - name: question-options
+    description: Operations related to question options
+paths:
+  /quiz:
+    post:
+      tags:
+        - quizzes
+      summary: Create a new quiz
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateQuizDto'
+      responses:
+        '201':
+          description: Quiz created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags:
+        - quizzes
+      summary: Get all quizzes
+      responses:
+        '200':
+          description: List of all quizzes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Quiz'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /quiz/{id}:
+    get:
+      tags:
+        - quizzes
+      summary: Get a single quiz by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Retrieved the quiz
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - quizzes
+      summary: Update a quiz by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateQuizDto'
+      responses:
+        '200':
+          description: Quiz updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - quizzes
+      summary: Delete a quiz by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Quiz deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '404':
+          description: Quiz not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /question:
+    post:
+      tags:
+        - questions
+      summary: Create a new question
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateQuestionDto'
+      responses:
+        '201':
+          description: Question created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags:
+        - questions
+      summary: Get all questions
+      responses:
+        '200':
+          description: List of all questions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /question/{id}:
+    get:
+      tags:
+        - questions
+      summary: Get a single question by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Retrieved the question
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        '404':
+          description: Question not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - questions
+      summary: Update a question by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateQuestionDto'
+      responses:
+        '200':
+          description: Question updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        '404':
+          description: Question not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - questions
+      summary: Delete a question by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Question deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '404':
+          description: Question not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /question-options:
+    post:
+      tags:
+        - question-options
+      summary: Create a new question option
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateQuestionOptionDto'
+      responses:
+        '201':
+          description: Question option created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionOption'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags:
+        - question-options
+      summary: Get all question options
+      responses:
+        '200':
+          description: List of all question options
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuestionOption'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /question-options/{id}:
+    get:
+      tags:
+        - question-options
+      summary: Get a single question option by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Retrieved the question option
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionOption'
+        '404':
+          description: Question option not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - question-options
+      summary: Update a question option by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateQuestionOptionDto'
+      responses:
+        '200':
+          description: Question option updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionOption'
+        '404':
+          description: Question option not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - question-options
+      summary: Delete a question option by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Question option deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '404':
+          description: Question option not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    CreateQuestionDto:
+      type: object
+      properties:
+        questionText:
+          type: string
+          example: 'What is the capital of France?'
+        questionType:
+          type: string
+          enum:
+            - 'multiple-choice'
+            - 'true-false'
+            - 'short-answer'
+            - 'essay'
+            - 'checkbox'
+        maxPoints:
+          type: integer
+          example: 10
+        explanation:
+          type: string
+        correctAnswer:
+          type: string
+        quizId:
+          type: string
+          format: uuid
+    UpdateQuestionDto:
+      type: object
+      properties:
+        questionText:
+          type: string
+          example: 'What is the capital of France?'
+        questionType:
+          type: string
+          enum:
+            - 'multiple-choice'
+            - 'true-false'
+            - 'short-answer'
+            - 'essay'
+            - 'checkbox'
+        maxPoints:
+          type: integer
+          example: 10
+        explanation:
+          type: string
+        correctAnswer:
+          type: string
+        quizId:
+          type: string
+          format: uuid
+    Question:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        questionText:
+          type: string
+        questionType:
+          type: string
+        maxPoints:
+          type: integer
+        explanation:
+          type: string
+        correctAnswer:
+          type: string
+        quizId:
+          type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+    Success:
+      type: object
+      properties:
+        message:
+          type: string

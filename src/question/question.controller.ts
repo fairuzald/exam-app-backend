@@ -9,23 +9,26 @@ import {
   Res,
   NotFoundException,
 } from '@nestjs/common';
-
 import { Response } from 'express';
 import { QuestionService } from './question.service';
 import { CreateQuestionDto, UpdateQuestionDto } from './question.dto';
+import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('questions')
 @Controller('question')
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
-  //   Create a new question
   @Post()
+  @ApiOperation({ summary: 'Create a new question' })
+  @ApiResponse({ status: 201, description: 'Question created successfully.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
   async create(
-    @Body() createQuestionOptionDto: CreateQuestionDto,
+    @Body() createQuestionDto: CreateQuestionDto,
     @Res() response: Response,
   ) {
     try {
-      const res = await this.questionService.create(createQuestionOptionDto);
+      const res = await this.questionService.create(createQuestionDto);
       return response.status(201).json(res);
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -35,8 +38,10 @@ export class QuestionController {
     }
   }
 
-  //   Get all question
   @Get()
+  @ApiOperation({ summary: 'Get all questions' })
+  @ApiResponse({ status: 200, description: 'Retrieved all questions.' })
+  @ApiResponse({ status: 404, description: 'Not found.' })
   async findAll(@Res() response: Response) {
     try {
       const res = await this.questionService.findAll();
@@ -50,6 +55,9 @@ export class QuestionController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get a single question by ID' })
+  @ApiResponse({ status: 200, description: 'Retrieved the question.' })
+  @ApiResponse({ status: 404, description: 'Question not found.' })
   async findOne(@Param('id') id: string, @Res() response: Response) {
     try {
       const res = await this.questionService.findOne(id);
@@ -62,18 +70,18 @@ export class QuestionController {
     }
   }
 
-  //   Update a question
   @Put(':id')
+  @ApiOperation({ summary: 'Update a question by ID' })
+  @ApiResponse({ status: 200, description: 'Question updated successfully.' })
+  @ApiResponse({ status: 404, description: 'Question not found.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
   async update(
     @Param('id') id: string,
-    @Body() updateQuestionOptionDto: UpdateQuestionDto,
+    @Body() updateQuestionDto: UpdateQuestionDto,
     @Res() response: Response,
   ) {
     try {
-      const res = await this.questionService.update(
-        id,
-        updateQuestionOptionDto,
-      );
+      const res = await this.questionService.update(id, updateQuestionDto);
       return response.status(200).json(res);
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -84,10 +92,13 @@ export class QuestionController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a question by ID' })
+  @ApiResponse({ status: 200, description: 'Question deleted successfully.' })
+  @ApiResponse({ status: 404, description: 'Question not found.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
   async remove(@Param('id') id: string, @Res() response: Response) {
     try {
       const result = await this.questionService.remove(id);
-
       return response.status(200).json(result);
     } catch (error) {
       if (error instanceof NotFoundException) {

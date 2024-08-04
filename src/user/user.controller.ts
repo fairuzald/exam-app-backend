@@ -6,6 +6,7 @@ import {
   Get,
   Req,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
@@ -18,12 +19,17 @@ import {
 } from './user.dto';
 import { Response, Request } from 'express';
 import { AuthGuard } from './guards/auth.guard';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('user')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('register')
+  @ApiOperation({ summary: 'Register a new user' })
+  @ApiResponse({ status: 201, description: 'User registered successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   async register(@Body() registerDto: RegisterDto, @Res() response: Response) {
     try {
       const result = await this.userService.register(registerDto);
@@ -34,6 +40,9 @@ export class UserController {
   }
 
   @Post('activate')
+  @ApiOperation({ summary: 'Activate a user account' })
+  @ApiResponse({ status: 201, description: 'User activated successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   async activateUser(
     @Body() activationDto: ActivationDto,
     @Res() response: Response,
@@ -47,6 +56,9 @@ export class UserController {
   }
 
   @Post('login')
+  @ApiOperation({ summary: 'Login a user' })
+  @ApiResponse({ status: 200, description: 'User logged in successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   async login(@Body() loginDto: LoginDto, @Res() response: Response) {
     try {
       const result = await this.userService.login(loginDto);
@@ -57,6 +69,12 @@ export class UserController {
   }
 
   @Get('me')
+  @ApiOperation({ summary: 'Get logged-in user details' })
+  @ApiResponse({
+    status: 200,
+    description: 'User details retrieved successfully',
+  })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   @UseGuards(AuthGuard)
   async getLoggedInUser(@Req() request: Request, @Res() response: Response) {
     try {
@@ -68,6 +86,9 @@ export class UserController {
   }
 
   @Post('forgot-password')
+  @ApiOperation({ summary: 'Request a password reset' })
+  @ApiResponse({ status: 200, description: 'Password reset link sent' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   async forgotPassword(
     @Body() forgotPasswordDto: ForgotPasswordDto,
     @Res() response: Response,
@@ -81,6 +102,9 @@ export class UserController {
   }
 
   @Post('reset-password')
+  @ApiOperation({ summary: 'Reset user password' })
+  @ApiResponse({ status: 200, description: 'Password reset successful' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
     @Res() response: Response,
@@ -96,6 +120,9 @@ export class UserController {
   }
 
   @Post('logout')
+  @ApiOperation({ summary: 'Logout a user' })
+  @ApiResponse({ status: 200, description: 'Logged out successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   @UseGuards(AuthGuard)
   async logout(@Req() request: Request, @Res() response: Response) {
     try {
@@ -107,6 +134,9 @@ export class UserController {
   }
 
   @Get('all')
+  @ApiOperation({ summary: 'Retrieve all users' })
+  @ApiResponse({ status: 200, description: 'Users retrieved successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   async findAllUsers(@Res() response: Response) {
     try {
       const users = await this.userService.findAllUsers();
@@ -116,7 +146,10 @@ export class UserController {
     }
   }
 
-  @Post('update')
+  @Put('user')
+  @ApiOperation({ summary: 'Update user details' })
+  @ApiResponse({ status: 200, description: 'User updated successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   @UseGuards(AuthGuard)
   async updateUser(
     @Body() updateDto: UpdateUserDto,

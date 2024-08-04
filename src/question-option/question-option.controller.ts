@@ -9,19 +9,26 @@ import {
   Res,
   NotFoundException,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { QuestionOptionService } from './question-option.service';
 import {
   CreateQuestionOptionDto,
   UpdateQuestionOptionDto,
 } from './question-option.dto';
-import { Response } from 'express';
+import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('question-options')
 @Controller('question-options')
 export class QuestionOptionController {
   constructor(private readonly questionOptionService: QuestionOptionService) {}
 
-  //   Create a new question option
   @Post()
+  @ApiOperation({ summary: 'Create a new question option' })
+  @ApiResponse({
+    status: 201,
+    description: 'Question option created successfully.',
+  })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
   async create(
     @Body() createQuestionOptionDto: CreateQuestionOptionDto,
     @Res() response: Response,
@@ -39,8 +46,10 @@ export class QuestionOptionController {
     }
   }
 
-  //   Get all question options
   @Get()
+  @ApiOperation({ summary: 'Get all question options' })
+  @ApiResponse({ status: 200, description: 'Retrieved all question options.' })
+  @ApiResponse({ status: 404, description: 'Not found.' })
   async findAll(@Res() response: Response) {
     try {
       const res = await this.questionOptionService.findAll();
@@ -53,8 +62,10 @@ export class QuestionOptionController {
     }
   }
 
-  //   Get a single question option
   @Get(':id')
+  @ApiOperation({ summary: 'Get a single question option by ID' })
+  @ApiResponse({ status: 200, description: 'Retrieved the question option.' })
+  @ApiResponse({ status: 404, description: 'Question option not found.' })
   async findOne(@Param('id') id: string, @Res() response: Response) {
     try {
       const res = await this.questionOptionService.findOne(id);
@@ -67,8 +78,14 @@ export class QuestionOptionController {
     }
   }
 
-  //   Update a question option
   @Put(':id')
+  @ApiOperation({ summary: 'Update a question option by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Question option updated successfully.',
+  })
+  @ApiResponse({ status: 404, description: 'Question option not found.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
   async update(
     @Param('id') id: string,
     @Body() updateQuestionOptionDto: UpdateQuestionOptionDto,
@@ -89,10 +106,16 @@ export class QuestionOptionController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a question option by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Question option deleted successfully.',
+  })
+  @ApiResponse({ status: 404, description: 'Question option not found.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
   async remove(@Param('id') id: string, @Res() response: Response) {
     try {
       const result = await this.questionOptionService.remove(id);
-
       return response.status(200).json(result);
     } catch (error) {
       if (error instanceof NotFoundException) {
