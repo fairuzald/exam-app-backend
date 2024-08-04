@@ -4,11 +4,11 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: bismillah.33
-      POSTGRES_DB: exam_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
-      - '5433:5432'
+      - ${DB_PORT}:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
     command: ['postgres', '-c', 'shared_preload_libraries=uuid-ossp']
@@ -20,9 +20,10 @@ services:
       - db
     environment:
       DATABASE_HOST: db
-      DATABASE_PORT: 5432
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: bismillah.33
-      DATABASE_NAME: exam_db
+      DATABASE_PORT: ${DB_PORT}
+      DATABASE_USER: ${DB_USER}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      DATABASE_NAME: ${DB_NAME}
+
 volumes:
   postgres_data:
