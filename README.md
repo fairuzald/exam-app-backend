@@ -32,7 +32,7 @@ I already make to use the JWT token for the authentication and authorization pro
 
 1. **CRUD Operations**: Supports creating, reading, updating, and deleting users, quizzes, questions and options.
 2. **Authentication**: Uses JWT tokens for securing endpoints related to the user and maintaining user sessions.
-3. **Database**: Utilizes PostgreSQL hosted on [Neon][https://neon.tech/] for data storage.
+3. **Database**: Utilizes PostgreSQL hosted on [Neon](https://neon.tech/) for data storage.
 4. **E2E Testing**: Comprehensive end-to-end tests covering all edge cases.
 
 ## Project Structure
@@ -145,3 +145,8 @@ E2E tests are written using Jest and Supertest. These tests cover various scenar
 
 - **Definisi**: Memisahkan logika akses data dari logika bisnis.
 - **Keuntungan**: Separation of concerns dan memudahkan pengujian dengan mocking.
+
+## Deployment
+
+You can see the deployment of this project on [Railway](https://exam-app-backend-production-0873.up.railway.app/)
+You can see the documentation API on [Swagger](https://exam-app-backend-production-0873.up.railway.app/docs)
